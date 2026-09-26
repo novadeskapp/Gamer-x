@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GAMER X — Gaming Top-Up</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{--bg:#070912;--panel:#0e1220;--panel2:#12182a;--line:#242b40;--text:#f4f7ff;--muted:#8f98ae;--blue:#38a7ff;--violet:#8b5cf6;--green:#22c55e}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 80% 0,#18205a55,transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    button,input{font:inherit}.wrap{max-width:1180px;margin:auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 26px}
+    .logo{font-size:24px;font-weight:900;letter-spacing:1px}.logo span{color:var(--blue)}
+    nav{display:flex;gap:24px;color:var(--muted);font-size:14px}nav a{color:inherit;text-decoration:none}
+    .btn{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;color:white;background:linear-gradient(135deg,var(--blue),var(--violet));box-shadow:0 8px 25px #388cff25}
+    .btn.secondary{background:#171d2e;border:1px solid var(--line);box-shadow:none}.btn.danger{background:#261521;border:1px solid #522238}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;padding:55px 0 45px}
+    .badge{display:inline-flex;padding:7px 11px;border:1px solid #294b70;border-radius:999px;color:#74c3ff;background:#0b2034;margin-bottom:18px;font-size:12px;font-weight:800}
+    h1{font-size:clamp(42px,7vw,76px);line-height:.95;margin:0 0 20px;letter-spacing:-3px}h1 span{background:linear-gradient(90deg,#fff,#54b5ff,#9b7bff);-webkit-background-clip:text;color:transparent}
+    .hero p{font-size:18px;line-height:1.6;color:var(--muted);max-width:620px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+    .hero-card{min-height:330px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(145deg,#121a31,#0a0e19);padding:26px;position:relative;overflow:hidden}
+    .orb{position:absolute;width:240px;height:240px;border-radius:50%;right:-70px;top:-70px;background:linear-gradient(135deg,#2196ff66,#8b5cf666);filter:blur(2px)}
+    .balance{position:relative;margin-top:80px}.balance small{color:var(--muted)}.balance strong{display:block;font-size:45px;margin:8px 0}
+    section{padding:35px 0}.section-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}.section-title h2{margin:0;font-size:27px}.section-title p{margin:0;color:var(--muted)}
+    .games{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.game{padding:20px;border-radius:18px;border:1px solid var(--line);background:var(--panel);min-height:150px}.game .icon{font-size:38px}.game b{display:block;margin-top:12px}.game small{color:var(--muted)}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.feature{padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:18px}.feature h3{margin:10px 0}.feature p{color:var(--muted);line-height:1.5}
+    footer{padding:35px 0;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+    .hidden{display:none!important}.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:18px;z-index:10}.modal-box{width:min(430px,100%);background:#0e1321;border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 30px 100px #000}
+    .modal-head{display:flex;justify-content:space-between;align-items:center}.close{background:none;border:0;color:#9aa4ba;font-size:28px;cursor:pointer}
+    label{display:block;color:#b6bfd2;font-size:13px;margin:15px 0 7px}input{width:100%;padding:13px 14px;background:#090d18;color:white;border:1px solid var(--line);border-radius:11px;outline:none}input:focus{border-color:#418eff}
+    .form-actions{margin-top:18px}.msg{margin-top:13px;font-size:13px;color:#8ecbff;line-height:1.5}.switch{margin-top:15px;color:var(--muted);font-size:13px}.switch button{background:none;border:0;color:#5db8ff;cursor:pointer}
+    .dash{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}.card h3{margin-top:0}.profile-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #20263a}.profile-row:last-child{border-bottom:0}.muted{color:var(--muted)}
+    @media(max-width:800px){nav{display:none}.hero{grid-template-columns:1fr;padding-top:25px}.games{grid-template-columns:repeat(2,1fr)}.features,.dash{grid-template-columns:1fr}.hero-card{min-height:250px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">GAMER <span>X</span></div>
+    <nav><a href="#games">Игры</a><a href="#features">Преимущества</a><a href="#account">Аккаунт</a></nav>
+    <button id="authBtn" class="btn">Войти</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="badge">⚡ GAMING TOP-UP PLATFORM</div>
+        <h1>Пополняй игры.<br><span>Играй больше.</span></h1>
+        <p>GAMER X — премиальная платформа для игровых пополнений. Быстрый интерфейс, личный кабинет и история операций.</p>
+        <div class="actions">
+          <button class="btn" id="heroAuth">Начать</button>
+          <a class="btn secondary" href="#games">Смотреть игры</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="orb"></div>
+        <div class="balance"><small>ВАШ БАЛАНС</small><strong id="balance">$0.00</strong><span class="muted">Доступно в аккаунте</span></div>
+      </div>
+    </section>
+
+    <section id="games">
+      <div class="section-title"><div><h2>Популярные игры</h2><p>Выберите игру для пополнения</p></div></div>
+      <div class="games">
+        <div class="game"><div class="icon">🔫</div><b>PUBG Mobile</b><small>UC • скоро</small></div>
+        <div class="game"><div class="icon">🔥</div><b>Free Fire</b><small>Diamonds • скоро</small></div>
+        <div class="game"><div class="icon">⚔️</div><b>Mobile Legends</b><small>Diamonds • скоро</small></div>
+        <div class="game"><div class="icon">🎮</div><b>Steam</b><small>Wallet • скоро</small></div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="features">
+        <div class="feature"><div>🔐</div><h3>Безопасный аккаунт</h3><p>Авторизация через Supabase Auth. Пароли не хранятся в нашем frontend.</p></div>
+        <div class="feature"><div>⚡</div><h3>Быстрый интерфейс</h3><p>Оптимизировано для телефона и компьютера.</p></div>
+        <div class="feature"><div>💳</div><h3>Пополнения</h3><p>Платёжная система будет подключена отдельным защищённым серверным этапом.</p></div>
+      </div>
+    </section>
+
+    <section id="account" class="hidden">
+      <div class="section-title"><div><h2>Личный кабинет</h2><p id="accountStatus">Вы вошли</p></div><button id="logout" class="btn danger">Выйти</button></div>
+      <div class="dash">
+        <div class="card"><h3>Профиль</h3><div class="profile-row"><span class="muted">Email</span><span id="email">—</span></div><div class="profile-row"><span class="muted">Имя</span><span id="displayName">—</span></div></div>
+        <div class="card"><h3>Баланс</h3><div style="font-size:38px;font-weight:900" id="dashBalance">$0.00</div><p class="muted">Пополнение будет подключено после настройки платёжного провайдера.</p></div>
+        <div class="card" style="grid-column:1/-1"><h3>История операций</h3><p class="muted">Пока операций нет. Здесь появятся подтверждённые пополнения и покупки.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 GAMER X • Gaming Top-Up Platform</footer>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head"><h2 id="modalTitle">Вход в GAMER X</h2><button class="close" id="close">×</button></div>
+    <form id="authForm">
+      <label>Email</label><input id="emailInput" type="email" autocomplete="email" required placeholder="you@example.com">
+      <label>Пароль</label><input id="passwordInput" type="password" autocomplete="current-password" required minlength="6" placeholder="Минимум 6 символов">
+      <div id="nameField" class="hidden"><label>Имя пользователя</label><input id="nameInput" type="text" maxlength="30" placeholder="Gamer"></div>
+      <div class="form-actions"><button class="btn" style="width:100%" id="submitBtn">Войти</button></div>
+      <div id="message" class="msg"></div>
+      <div class="switch"><span id="switchText">Нет аккаунта?</span> <button type="button" id="switchMode">Регистрация</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://yqxbkuumzjserhebgbkp.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_pY3gD0TLVlzar5sgiU8JRQ_qUe-U2QO";
+
+let sb = null;
+if (!SUPABASE_URL.startsWith("YOUR_") && !SUPABASE_PUBLISHABLE_KEY.startsWith("YOUR_")) {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+}
+
+const $ = id => document.getElementById(id);
+let mode = "login";
+
+function openAuth(m="login"){
+  mode=m;$("modal").classList.remove("hidden");$("message").textContent="";
+  $("modalTitle").textContent=m==="login"?"Вход в GAMER X":"Создание аккаунта";
+  $("submitBtn").textContent=m==="login"?"Войти":"Зарегистрироваться";
+  $("nameField").classList.toggle("hidden",m==="login");
+  $("switchText").textContent=m==="login"?"Нет аккаунта?":"Уже есть аккаунт?";
+  $("switchMode").textContent=m==="login"?"Регистрация":"Войти";
+}
+function closeAuth(){$("modal").classList.add("hidden")}
+$("authBtn").onclick=()=>openAuth("login");
+$("heroAuth").onclick=()=>openAuth("register");
+$("close").onclick=closeAuth;
+$("switchMode").onclick=()=>openAuth(mode==="login"?"register":"login");
+
+$("authForm").onsubmit=async e=>{
+  e.preventDefault();
+  if(!sb){$("message").textContent="Сначала укажи SUPABASE URL и Publishable Key в этом файле.";return}
+  const email=$("emailInput").value.trim(), password=$("passwordInput").value, name=$("nameInput").value.trim();
+  $("submitBtn").disabled=true;$("message").textContent="Обработка...";
+  try{
+    if(mode==="register"){
+      const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name},emailRedirectTo:location.href}});
+      if(error) throw error;
+      if(data.session){closeAuth();await refresh()}
+      else $("message").textContent="Аккаунт создан. Проверьте почту и подтвердите email.";
+    }else{
+      const {error}=await sb.auth.signInWithPassword({email,password});
+      if(error) throw error;
+      closeAuth();await refresh();
+    }
+  }catch(err){$("message").textContent=err.message||"Произошла ошибка."}
+  finally{$("submitBtn").disabled=false}
+};
+
+async function refresh(){
+  if(!sb)return;
+  const {data:{session}}=await sb.auth.getSession();
+  const logged=!!session;
+  $("authBtn").textContent=logged?"Кабинет":"Войти";
+  $("account").classList.toggle("hidden",!logged);
+  if(!logged){$("balance").textContent="$0.00";return}
+  $("email").textContent=session.user.email||"—";
+  $("displayName").textContent=session.user.user_metadata?.display_name||"Gamer";
+  const {data:profile,error}=await sb.from("profiles").select("display_name,balance_cents").eq("id",session.user.id).maybeSingle();
+  if(!error&&profile){
+    const dollars=(Number(profile.balance_cents||0)/100).toFixed(2);
+    $("balance").textContent="$"+dollars;$("dashBalance").textContent="$"+dollars;
+    $("displayName").textContent=profile.display_name||session.user.user_metadata?.display_name||"Gamer";
+  }
+  location.hash="account";
+}
+$("logout").onclick=async()=>{await sb.auth.signOut();await refresh();location.hash=""};
+if(sb) sb.auth.onAuthStateChange(()=>refresh());
+refresh();
+</script>
+</body>
+</html>
